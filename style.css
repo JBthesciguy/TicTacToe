@@ -1,0 +1,143 @@
+.container {
+    width: 450px;
+    height: 450px;
+    display: block;
+    margin: 25px auto;
+    position: relative;
+}
+
+#cvs {
+    position: absolute;
+    border: 1px solid #000;
+}
+
+.menu {
+    position: absolute;
+    width: 450px;
+    height: 450px;
+}
+
+.menu h1 {
+    text-align: center;
+    font-size: 65px;
+    font-family: 'Rajdhani', sans-serif;
+    color: #f00;
+    margin: 30px 0 20px 0;
+}
+
+.menu h2 {
+    font-family: 'Rajdhani', sans-serif;
+    text-align: center;
+    font-weight: bold;
+}
+
+.menu div {
+    display: inline-block;
+}
+
+.menu .ComputerAndAlgorithm,
+.X {
+    font-family: 'Rajdhani', sans-serif;
+    padding: 5px;
+    background-color: #FFF;
+    color: #000;
+    font-size: 1.5em;
+    border-radius: 5px;
+    margin-left: 70px;
+    width: 150px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #000;
+}
+
+.menu .Human,
+.O {
+    font-family: 'Rajdhani', sans-serif;
+    padding: 5px;
+    background-color: #FFF;
+    color: #000;
+    font-size: 1.5em;
+    border-radius: 5px;
+    margin-left: 10px;
+    width: 150px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #000;
+}
+
+.menu .Human:hover,
+.ComputerAndAlgorithm:hover,
+.X:hover,
+.O:hover {
+    background-color: #011627;
+    color: #FFF;
+}
+
+.menu .play {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 1.5em;
+    width: 70px;
+    display: block;
+    margin: 25px auto;
+    border-radius: 5px;
+    border: 1px solid #011627;
+    text-align: center;
+    padding: 10px;
+    background-color: #011627;
+    color: #FFF;
+    cursor: pointer;
+    transition: 100ms width ease-in;
+}
+
+.menu .play:hover {
+    width: 110px;
+}
+
+.active {
+    background-color: #011627 !important;
+    color: #FFF !important;
+}
+
+.hide {
+    display: none;
+}
+
+.gameOver {
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    background-color: rgba(0, 0, 0, 0.95);
+}
+
+.gameOver h1 {
+    text-align: center;
+    font-size: 50px;
+    font-family: 'Rajdhani', sans-serif;
+    color: #fff;
+    margin: 40px 0 20px 0;
+}
+
+.gameOver .winner-img {
+    display: block;
+    margin: 20px auto;
+}
+
+.gameOver .play {
+    font-family: 'Rajdhani', sans-serif;
+    width: 150px;
+    font-size: 0.5em;
+    display: block;
+    margin: 25px auto;
+    border-radius: 5px;
+    border: 1px solid #fff;
+    text-align: center;
+    padding: 10px;
+    background-color: #fff;
+    color: #000;
+    cursor: pointer;
+    transition: 100ms width ease-in;
+}
+
+.gameOver .play:hover {
+    width: 200px;
+}

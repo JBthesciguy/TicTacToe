@@ -1,0 +1,251 @@
+ <!DOCTYPE html>
+ <html lang="en">
+
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@1,100&display=swap" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300&display=swap" rel="stylesheet">
+     <title>Document</title>
+     <link rel="stylesheet" href="style.css">
+ </head>
+
+ <body>
+     <div class="container">
+         <canvas id="cvs" width="450" height="450"></canvas>
+         <div class="menu">
+             <h1>TIC TAC TOE</h1>
+             <h2>Play Against</h2>
+             <div class="ComputerAndAlgorithm">Computer</div>
+             <div class="Human">1 v 1</div>
+             <div class="Empty"></div>
+             <h2>Symbol</h2>
+             <div class="X">X</div>
+             <div class="O">O</div>
+             <div class="play">Play</div>
+
+         </div>
+         <div class="gameOver hide"></div>
+     </div>
+
+     <script>
+         const options = document.querySelector(".menu");
+         const gameOver = document.querySelector(".gameOver");
+
+         const AIbtn = options.querySelector(".ComputerAndAlgorithm");
+         const humanBtn = options.querySelector(".Human");
+         const Xin = options.querySelector(".X");
+         const Oin = options.querySelector(".O");
+         const playBtn = options.querySelector(".play");
+
+         let OPPONENT;
+         const player = new Object;
+
+         AIbtn.addEventListener("click", function () {
+             OPPONENT = "computer";
+             switchActiveInput(humanBtn, AIbtn);
+         });
+
+         humanBtn.addEventListener("click", function () {
+             OPPONENT = "friend";
+             switchActiveInput(AIbtn, humanBtn);
+         });
+
+         Xin.addEventListener("click", function () {
+             player.firstMove = "X";
+             player.computer = "O";
+             player.friend = "O";
+             switchActiveInput(Oin, Xin);
+         });
+
+         Oin.addEventListener("click", function () {
+             player.firstMove = "O";
+             player.computer = "X";
+             player.friend = "X";
+             switchActiveInput(Xin, Oin);
+         });
+
+         playBtn.addEventListener("click", function () {
+             if (!OPPONENT) {
+                 AIbtn.style.backgroundColor = "#f00";
+                 humanBtn.style.backgroundColor = "#f00";
+                 return;
+             }
+             if (!player.firstMove) {
+                 Xin.style.backgroundColor = "#f00";
+                 Oin.style.backgroundColor = "#f00";
+                 return;
+             }
+             init(player, OPPONENT);
+             options.classList.add("hide");
+         });
+
+         function switchActiveInput(off, on) {
+             off.classList.remove("active");
+             on.classList.add("active");
+         }
+
+         function init(player, OPPONENT) {
+             canvas = document.getElementById("cvs");
+             ctx = canvas.getContext("2d");
+
+             // Stores player input
+
+             let inputData = new Array(9);
+             let OXinputpos = [];
+
+             // Size of board
+
+             const column = 3;
+             const row = 3;
+             const SQUARE_SIZE = 150;
+
+             // Human player takes the first move
+
+             let currentPlayer = player.firstMove;
+
+             // Loads the images
+
+             const Ximage = new Image();
+             Ximage.src = "img/X.png";
+
+             const Oimage = new Image();
+             Oimage.src = "img/O.png";
+
+             // Winning combinations
+
+             winCombos = [
+                 [0, 1, 2],
+                 [3, 4, 5],
+                 [6, 7, 8],
+                 [0, 4, 8],
+                 [2, 4, 6],
+                 [0, 3, 6],
+                 [1, 4, 7],
+                 [2, 5, 8]
+             ];
+
+             let game_Over = false;
+
+             function drawBoard() {
+                 // Draws the board
+                 // OXinputpos is an array that contains addresses [0, 0] to [2, 2]
+                 // inputDataPositions = 0, 1, 2, 3, 4, 5, 6, 7, 8
+                 let InputDataPositions = 0;
+                 for (var i = 0; i < row; i++) {
+                     OXinputpos[i] = [];
+                     for (var j = 0; j < column; j++) {
+                         OXinputpos[i][j] = InputDataPositions;
+
+                         InputDataPositions++;
+                         ctx.strokeStyle = "#000";
+                         ctx.strokeRect(j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE,
+                             SQUARE_SIZE); // <-- Size of each squares with respect to i and j.
+                     }
+                 }
+             }
+
+             drawBoard();
+
+             canvas.addEventListener("click", function (event) {
+                 if (game_Over) {
+                     return
+                 }
+
+                 // Retrieves the coordinates of the player input 
+                 // with respect to the screen on the top right corner.
+                 let X = event.clientX - canvas.getBoundingClientRect().x;
+                 let Y = event.clientY - canvas.getBoundingClientRect().y;
+
+                 // Converts it to 2d array address
+                 let i = Math.floor(Y / SQUARE_SIZE);
+                 let j = Math.floor(X / SQUARE_SIZE);
+
+                 // Gives each input a 1d array address i.e. [0, 0] = 0 ... [2, 2] = 8
+                 let InputDataPositions = OXinputpos[i][j];
+
+                 // Not the same move
+                 if (inputData[InputDataPositions]) {
+                     return;
+                 }
+
+                 // Stores player input with addresses
+                 inputData[InputDataPositions] = currentPlayer;
+
+                 // Print out the input
+                 console.log(InputDataPositions);
+
+                 drawPieceOnBoard(currentPlayer, i, j);
+
+                 if (isWinner(inputData, currentPlayer)) {
+                     displayGameOver(currentPlayer);
+                     game_Over = true;
+                 }
+
+                 if (isTie(inputData)) {
+                     displayGameOver("tie");
+                     game_Over = true;
+                 }
+
+                 // GIVE TURN TO THE OTHER PLAYER
+                 currentPlayer = currentPlayer == player.firstMove ? player.friend : player.firstMove;
+
+                 function isWinner(inputData, player) {
+                     for (var i = 0; i < winCombos.length; i++) {
+                         let won = true;
+                         for (var j = 0; j < winCombos[i].length; j++) {
+                             let CheckWinCombos = winCombos[i][j];
+
+                             // If the inputData satisfies the conditions
+                             // by checking if the inputData addressess ("X", "O") equals the winCombos array addressess,
+                             // then, the player wins.
+
+                             won = inputData[CheckWinCombos] == player && won;
+                             console.log(inputData);
+                             console.log(won);
+                         }
+                         if (won) {
+                             return true;
+                         }
+                     }
+                     return false;
+                 }
+
+                 function isTie(inputData) {
+                     let boardIsFilled = true;
+                     for (var i = 0; i < inputData.length; i++) {
+                         boardIsFilled = inputData[i] && boardIsFilled;
+                     }
+                     if (boardIsFilled) {
+                         return true;
+                     }
+                     return false;
+                 }
+
+                 function displayGameOver(player) {
+                     let display = player == "tie" ? "No winner" : "The winner is";
+                     let imgSrc = 'img/${player}.png'
+
+                     gameOver.innerHTML = `
+            <h1>${display}</1>
+            <img class="winner-img" src=${imgSrc} </img>
+            <div class="play" onclick="location.reload()">Play Again!</div>
+        `;
+
+                     gameOver.classList.remove("hide");
+                 }
+
+
+                 function drawPieceOnBoard(player, i, j) {
+                     let img = player == "X" ? Ximage : Oimage;
+                     ctx.drawImage(img, j * SQUARE_SIZE, i * SQUARE_SIZE);
+                 }
+
+             });
+         }
+     </script>
+
+
+ </body>
+
+ </html>
